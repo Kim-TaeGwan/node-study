@@ -1,6 +1,10 @@
 const express = require('express');
 const app = express();
-const port = 3000 // 서버 포트 번호
+const port = 3000; // 서버 포트 번호
+const customerRouter = require('./blob/main/routes/customer');
+const productRouter = require('./blob/main/routes/product');
+const compression = require('compression');
+
 
 // 클라이언트에서 HTTP 요청 메소드 중 GET을 이용해서 'host:port'로 요청을 보내면 실행되는 라우트
 app.get('/',(req,res) => {
@@ -89,3 +93,61 @@ const ex2 = function (req,res) {
 }
 
 app.get('/example',[ex0,ex1,ex2])
+
+// 모듈식 라우터 - 하나의 라우트 경로로 각 라우트 메소드 처리
+// app.route('/customer')
+//     .get(function (req,res) { // HTTP 메소드 GET 요청에 대한 조회 처리
+//         res.send('고객 정보 조회')
+//     })
+//     .post(function (req,res) { // HTTP 메소드 POST 요청에 대한 저장 처리
+//         res.send('신규 고객 추가')
+//     })
+//     .put(function (req,res) { // HTTP 메소드 PUT 요청에 대한 수정 처리
+//         res.send('고객 정보 수정')
+//     })
+//     .delete(function (req,res) { // HTTP 메소드 DELETE 요청에 대한 삭제 처리
+//         res.send('고객 정보 삭제')
+//     })
+
+app.use('/customer', customerRouter);
+app.use('/product', productRouter);
+
+app.get('/error',function (req,res) {
+    throw new Error('에러발생');
+    // 라우트에서 에러가 발생하면 익스프레스가 알아서 이를 잡아서 처리한다.
+    // 클라이언트로 500 에어 코드와 에러 정보를 전달한다.
+})
+
+app.use(function (err,req,res,next){
+    res.status(500).json({statusCode:res.statusCode,errMessage:err.message});// 상태코드 500, 에러 메세지 전달
+})
+
+app.get('/error2', function (req,res,next) {
+    next(new Error('에러 발생'));
+    // next() 함수를 사용해서 에러처리 핸들러로 에러 전달
+})
+
+// body-parser
+// parser application/x-www-form-urlencoded
+const urlencodedParser = express.urlencoded({extended:false})
+
+const jsonParser = express.json()
+
+app.use(express.json({
+    limit:'50mb'
+})); // 클라이언트 서로 전송 할 수 있는 json 데이터의 최대 크기를 50mb 로 제한.
+
+// 클라이언트로 부터 POST 방식으로 요청된 /login 라우터의 데이터는 UrlencodedParser 를 사용하는 것으로 정의
+app.post('/login',urlencodedParser,function (req,res) {
+    res.send('welcome, ' + req.body.username);
+})
+
+// 클라이언트로 부터 POST 방식으로 요청된 /api/users 라우터의 데이터는 jsonParser 를 사용하는 것으로 정의
+app.post('/api/users',jsonParser,function (req,res) {
+    // req.body 에서 사용정 정보 획득
+})
+
+
+
+// 클라이언트로 요청받은 라우터가 /api/getMap 인 경우에 대해서만 응답 데이터를 압축한다.
+app.use('/api/getMap',compression())
