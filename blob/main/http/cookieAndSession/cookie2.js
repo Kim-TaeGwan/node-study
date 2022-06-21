@@ -48,6 +48,8 @@ http.createServer(async (req,res) => {
             * 쿠키에는 들어가면 안 되는 글자들이 있는데, 대표적으로 한글과 줄바꿈이 있다.
             * 한글은 encodeURIComponent 로 감싸서 넣는다.
             *
+            * 이름 같은 민감한 개인정보를 쿠키에 넣어두는 것은 적절하지 못하다.
+            *
             * 쿠키명=쿠키값 : 기본적은 쿠키의 값이다. mycookie=test 같이 설정한다.
             * Expires=날짜 : 만료 기한이다. 이 기한이 지나면 쿠키가 제거된다. 기본값은 클라이언트가 종료될 떄까지 이다.
             * Max-age=초 : Expires 와 비슷하지만 날짜 대신 초를 입력할 수 있다. 해당 ㅊ토가 지나면 쿠키가 제거된다. Expires 보다 우선이다.
@@ -55,7 +57,8 @@ http.createServer(async (req,res) => {
             * Path=URL : 쿠키가 전송될 URL 을 특정할 수 있다. 기본값은 '/'이고, 이 경우 모든 URL 에서 쿠키를 전송할 수 있다.
             * Secure : HTTPS 일 경우에만 쿠키가 전송된다.
             * HttpOnly : 설정 시 자바스크립트에서 쿠키에 접근할 수 없다, 쿠키 조작을 방지하기 위해 설정하는 것이 좋다.
-            * */
+            */
+
             Location:'/',
             'Set-Cookie': `name=${encodeURIComponent(name)}; Expires=${expires.toGMTString()}; HttpOnly; Path=/`
         });
