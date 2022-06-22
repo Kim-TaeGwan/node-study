@@ -6,7 +6,7 @@ http.createServer((req,res)=> {
     * 두번째 인수로 응답에 대한 정보를 보내는데 콘텐츠의 형식이 HTML임을 알리고 있다.
     * 또한 한글 표시를 위해 charset을 utf-8로 지정했다. 이 정보가 기록되는 부분을 헤더(Header)라고 부른다.
     */
-    res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'});
+    res.writeHead(500, {'Content-Type': 'text/html; charset=utf-8'});
     /*
     * res.write 메서드의 첫번쨰 인수는 클라이언트로 보낼 데이터이다.
     * 지금은 HTML 모양의 문자열을 보냈지만 버퍼를 보낼 수도 있다. 또한, 여러 번 호출해서 데이터를 여러 개 보내도 된다.
